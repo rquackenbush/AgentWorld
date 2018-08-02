@@ -113,8 +113,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AgentWorld.Engine\AgentWorld.Engine.csproj">
-      <Project>{4ceb2c47-ccf2-4ecd-8543-4248185a7f71}</Project>
+    <ProjectReference Include="..\AgentWorld.Engine\AgentWorld.Engine.csproj">
+      <Project>{1a5a7df9-c723-418d-9747-fde12d0d0374}</Project>
       <Name>AgentWorld.Engine</Name>
     </ProjectReference>
   </ItemGroup>
