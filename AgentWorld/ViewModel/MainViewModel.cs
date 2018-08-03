@@ -12,14 +12,16 @@
 
     public class MainViewModel : ViewModelBase
     {
-        private int _numberOfAgents = 10000;
-        private int _memorySize = 10;
+        private int _numberOfAgents = 100000;
+        private int _memorySize = 8;
         private int _numberOfCycles = 10000;
-        private int _numberOfInstructions = 20;
+        private int _numberOfInstructions = 30;
         private int _worldWidth = 1000;
         private int _worldHeight = 1000;
         private WorldViewModel _world;
         private int _iterationNumber;
+
+        private readonly InstructionFactory _instructionFactory = new InstructionFactory();
 
         public MainViewModel()
         {
@@ -30,11 +32,9 @@
 
         private void Run()
         {
-            var agents = new List<Agent>(NumberOfAgents);
+            var agentModels = new List<AgentModel>(NumberOfAgents);
 
-            var instructionFactory = new InstructionFactory();
-
-            var agentModelFactory = new AgentModelFactory(instructionFactory, MemorySize, NumberOfInstructions);
+            var agentModelFactory = new AgentModelFactory(_instructionFactory, MemorySize, NumberOfInstructions);
 
             //create the agents
             for (int x = 0; x < NumberOfAgents; x++)
@@ -42,8 +42,54 @@
                 //Create the agent model
                 var agentModel = agentModelFactory.Create();
 
+                agentModels.Add(agentModel);
+            }
+
+            Task.Run(() =>
+            {
+                RunAgents(agentModels.ToArray());
+
+                var survivorModels = World.Agents
+                    .Where(a => !a.IsDead)
+                    .Select(a => a.GetModel())
+                    .ToArray();
+
+                FoodX = 700;
+                FoodY = 200;
+
+                RunAgents(survivorModels);
+            });
+
+            //var worldSize = new Size(WorldWidth, WorldHeight);
+
+            //var foodLocation = new Rect(new Point(FoodX, FoodY), new Size(FoodSize, FoodSize));
+
+            ////Create the world viewmodel
+            //World = new WorldViewModel(agents, worldSize, foodLocation);
+
+            //Task.Run(() =>
+            //{
+            //    for (int i = 0; i < NumberOfCycles; i++)
+            //    {
+            //        IterationNumber = i;
+
+            //        World.Cycle();
+            //    }
+
+            //    int lived = World.Agents.Count(a => !a.IsDead);
+
+            //    MessageBox.Show($"Generation 1 done - {lived} survived!");
+            //});
+        }
+
+        private void RunAgents(AgentModel[] agentModels)
+        {
+            var agents = new List<Agent>(NumberOfAgents);
+
+            foreach (var agentModel in agentModels)
+            {
                 //Create the agent
-                var agent = new Agent(agentModel, instructionFactory);
+                var agent = new Agent(agentModel, _instructionFactory);
 
                 agents.Add(agent);
             }
@@ -55,19 +101,16 @@
             //Create the world viewmodel
             World = new WorldViewModel(agents, worldSize, foodLocation);
 
-            Task.Run(() =>
+            for (int i = 0; i < NumberOfCycles; i++)
             {
-                for (int i = 0; i < NumberOfCycles; i++)
-                {
-                    IterationNumber = i;
+                IterationNumber = i;
 
-                    World.Cycle();
-                }
+                World.Cycle();
+            }
 
-                int lived = World.Agents.Count(a => !a.IsDead);
+            int lived = World.Agents.Count(a => !a.IsDead);
 
-                MessageBox.Show($"Done - {lived} survived!");
-            });
+            MessageBox.Show($"Generation complete - {lived} survived!");
         }
 
         public WorldViewModel World
@@ -152,7 +195,7 @@
 
         public int FoodX { get; set; } = 500;
 
-        public int FoodY { get; set; } = 500;
+        public int FoodY { get; set; } = 400;
 
         public int FoodSize { get; set; } = 50;
     }

@@ -1,5 +1,6 @@
 ﻿namespace AgentWorld.Engine.Instructions
 {
+    using System;
     using AgentWorld.Engine.Model;
     using AgentWorld.Engine.Runtime;
 
@@ -12,6 +13,10 @@
             if (context.Instruction.Data < context.Memory.Length)
             {
                 context.Memory[context.Instruction.Data] = true;
+            }
+            else
+            {
+                throw new Exception($"Invalid memory location {context.Instruction.Data}.");
             }
 
             return new InstructionExecutionResult(context.ProgramCounter + 1);

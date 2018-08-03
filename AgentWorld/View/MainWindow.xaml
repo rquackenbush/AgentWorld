@@ -31,7 +31,7 @@
         
         <Grid Grid.Row="2">
 
-            <Canvas Width="{Binding Path=World.Size.Width}" Height="{Binding Path=World.Size.Height}"  HorizontalAlignment="Left" VerticalAlignment="Top" Background="LightBlue">
+            <Canvas Width="{Binding Path=World.Size.Width}" Height="{Binding Path=World.Size.Height}"  HorizontalAlignment="Left" VerticalAlignment="Top" Background="LightGray">
                 <Rectangle Canvas.Left="{Binding Path=World.FoodLocation.Left}" Canvas.Top="{Binding Path=World.FoodLocation.Top}" Width="{Binding Path=World.FoodLocation.Width}" Height="{Binding Path=World.FoodLocation.Height}" Fill="Red"></Rectangle>
             </Canvas>
 
@@ -43,13 +43,13 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Rectangle Width="5" Height="5" >
+                        <Rectangle Width="3" Height="3" >
                             <Rectangle.Style>
                                 <Style TargetType="Rectangle">
                                     <Setter Property="Fill" Value="Black"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Path=IsDead}" Value="True">
-                                            <Setter Property="Fill" Value="LightGray"/>
+                                            <Setter Property="Fill" Value="Orange"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>

@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Threading.Tasks;
     using System.Windows;
     using AgentWorld.Engine.Runtime;
     using GalaSoft.MvvmLight;
@@ -19,8 +20,11 @@
 
             _agents = new ObservableCollection<AgentViewModel>(agents.Select(a =>
             {
-                var agentX = random.NextDouble() * size.Width;
-                var agentY = random.NextDouble() * size.Height;
+                //var agentX = random.NextDouble() * size.Width;
+                //var agentY = random.NextDouble() * size.Height;
+
+                var agentX = 100;
+                var agentY = 100;
 
                 var agentLocation = new Point(agentX, agentY);
 
@@ -50,6 +54,14 @@
 
         public void Cycle()
         {
+            //Parallel.ForEach(Agents, a =>
+            //{
+            //    if (!a.IsDead)
+            //    {
+            //        a.Cycle();
+            //    }
+            //});
+
             foreach (var agent in Agents.ToArray())
             {
                 if (!agent.IsDead)

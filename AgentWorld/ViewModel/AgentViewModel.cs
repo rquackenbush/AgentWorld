@@ -1,8 +1,10 @@
 ﻿namespace AgentWorld.ViewModel
 {
     using System.Collections;
+    using System.Runtime.InteropServices;
     using System.Windows;
     using System.Windows.Shapes;
+    using AgentWorld.Engine.Model;
     using AgentWorld.Engine.Runtime;
     using GalaSoft.MvvmLight;
 
@@ -87,8 +89,6 @@
             {
                 IsDead = true;
             }
-
-            
         }
 
         private void MoveUp()
@@ -158,6 +158,11 @@
                 _location = value; 
                 RaisePropertyChanged();
             }
+        }
+
+        public AgentModel GetModel()
+        {
+            return _agent.GetModel();
         }
     }
 }

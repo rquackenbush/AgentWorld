@@ -9,7 +9,8 @@
 
         protected override InstructionExecutionResult ExecuteCore(InstructionExecutionContext context)
         {
-            return new InstructionExecutionResult(context.Instruction.Data);
+            //return new InstructionExecutionResult(context.Instruction.Data);
+            return new InstructionExecutionResult(context.ProgramCounter + 1);
         }
 
         public override InstructionModel Create(InstructionCreationContext context)

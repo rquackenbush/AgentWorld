@@ -43,8 +43,13 @@
             {
                 _programCounter = result.ProgramCounter;
             }
-    }
+        }
 
         public bool[] Memory => _memory;
+
+        public AgentModel GetModel()
+        {
+            return _model;
+        }
     }
 }

@@ -40,7 +40,7 @@
         private InstructionModel CreateInstruction()
         {
             //Get an instruction type
-            InstructionType instructionType = (InstructionType)_random.Next(0, (int) InstructionType.ConditionalSkip);
+            InstructionType instructionType = (InstructionType)_random.Next(0, (int) InstructionType.ConditionalSkip + 1);
 
             //Get the instruction implementation
             InstructionBase instruction = _instructionFactory[instructionType];
