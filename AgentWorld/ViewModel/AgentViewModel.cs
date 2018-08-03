@@ -13,7 +13,7 @@
         private readonly WorldViewModel _world;
         private readonly Agent _agent;
 
-        private int _foodLevel = 1000;
+        private int _foodLevel = 2000;
         private Point _location;
         private bool _isDead;
 
@@ -56,24 +56,32 @@
 
             _agent.Cycle();
 
+            double vectorX = 0;
+            double vectorY = 0;
+
             if (_agent.Memory[MemoryLocations.MoveUpOutput])
             {
-                MoveUp();
+                vectorY++;
             }
 
             if (_agent.Memory[MemoryLocations.MoveDownOutput])
             {
-                MoveDown();
+                vectorY--;
             }
 
             if (_agent.Memory[MemoryLocations.MoveLeftOutput])
             {
-                MoveLeft();
+                vectorX--;
             }
 
             if (_agent.Memory[MemoryLocations.MoveRightOutput])
             {
-                MoveRight();
+                vectorX++;
+            }
+
+            if (Move(new Vector(vectorX, vectorY)))
+            {
+                IsDead = true;
             }
 
             if (_world.FoodLocation.Contains(Location))
@@ -91,53 +99,41 @@
             }
         }
 
-        private void MoveUp()
-        {
-            Move(new Vector(0, -1));
-        }
-
-        private void MoveDown()
-        {
-            Move(new Vector(0, 1));
-        }
-
-        private void MoveLeft()
-        {
-            Move(new Vector(-1, 0));
-        }
-
-        private void MoveRight()
-        {
-            Move(new Vector(1, 0));
-        }
-
-        private void Move(Vector vector)
+        private bool Move(Vector vector)
         {
             var newLocation = Location + vector;
 
             var x = newLocation.X;
             var y = newLocation.Y;
 
+            bool died = false;
+
             if (x < 0)
             {
                 x = 0;
+                died = true;
             }
             else if (x > _world.Size.Width)
             {
                 x = _world.Size.Width;
+                died = true;
             }
 
             if (y < 0)
             {
                 y = 0;
+                died = true;
             }
             else if (y > _world.Size.Height)
             {
                 y = _world.Size.Height;
+                died = true;
             }
 
             //Set the new location
             Location  = new Point(x, y);
+
+            return died;
         }
 
         public bool IsDead

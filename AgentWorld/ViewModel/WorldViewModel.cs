@@ -20,11 +20,11 @@
 
             _agents = new ObservableCollection<AgentViewModel>(agents.Select(a =>
             {
-                //var agentX = random.NextDouble() * size.Width;
-                //var agentY = random.NextDouble() * size.Height;
+                var agentX = random.NextDouble() * size.Width;
+                var agentY = random.NextDouble() * size.Height;
 
-                var agentX = 100;
-                var agentY = 100;
+                //var agentX = 100;
+                //var agentY = 100;
 
                 var agentLocation = new Point(agentX, agentY);
 

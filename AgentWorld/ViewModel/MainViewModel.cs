@@ -1,5 +1,6 @@
 ﻿namespace AgentWorld.ViewModel
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -32,6 +33,8 @@
 
         private void Run()
         {
+            var random = new Random();
+
             var agentModels = new List<AgentModel>(NumberOfAgents);
 
             var agentModelFactory = new AgentModelFactory(_instructionFactory, MemorySize, NumberOfInstructions);
@@ -47,42 +50,29 @@
 
             Task.Run(() =>
             {
-                RunAgents(agentModels.ToArray());
+                AgentModel[] toRun = agentModels.ToArray();
 
-                var survivorModels = World.Agents
-                    .Where(a => !a.IsDead)
-                    .Select(a => a.GetModel())
-                    .ToArray();
+                for (int generationIndex = 0; generationIndex < 10 && toRun.Length > 0; generationIndex++)
+                {
+                    Console.WriteLine($"Generation {generationIndex} starting....");
 
-                FoodX = 700;
-                FoodY = 200;
+                    FoodX = (int)(random.NextDouble() * 800) + 100;
+                    FoodY = (int)(random.NextDouble() * 800) + 100;
 
-                RunAgents(survivorModels);
+                    Console.WriteLine($"  Food is at ({FoodX}, {FoodY})");
+
+                    toRun = RunAgents(toRun);
+
+                    string message = $"  Generation {generationIndex} complete - {toRun.Length} survived!";
+
+                    Console.WriteLine(message);
+                }
+
+                MessageBox.Show("Done!");
             });
-
-            //var worldSize = new Size(WorldWidth, WorldHeight);
-
-            //var foodLocation = new Rect(new Point(FoodX, FoodY), new Size(FoodSize, FoodSize));
-
-            ////Create the world viewmodel
-            //World = new WorldViewModel(agents, worldSize, foodLocation);
-
-            //Task.Run(() =>
-            //{
-            //    for (int i = 0; i < NumberOfCycles; i++)
-            //    {
-            //        IterationNumber = i;
-
-            //        World.Cycle();
-            //    }
-
-            //    int lived = World.Agents.Count(a => !a.IsDead);
-
-            //    MessageBox.Show($"Generation 1 done - {lived} survived!");
-            //});
         }
 
-        private void RunAgents(AgentModel[] agentModels)
+        private AgentModel[] RunAgents(AgentModel[] agentModels)
         {
             var agents = new List<Agent>(NumberOfAgents);
 
@@ -99,18 +89,21 @@
             var foodLocation = new Rect(new Point(FoodX, FoodY), new Size(FoodSize, FoodSize));
 
             //Create the world viewmodel
-            World = new WorldViewModel(agents, worldSize, foodLocation);
+            var world = new WorldViewModel(agents, worldSize, foodLocation);
 
             for (int i = 0; i < NumberOfCycles; i++)
             {
                 IterationNumber = i;
 
-                World.Cycle();
+                world.Cycle();
             }
 
-            int lived = World.Agents.Count(a => !a.IsDead);
-
-            MessageBox.Show($"Generation complete - {lived} survived!");
+            var lived = world.Agents
+                .Where(a => !a.IsDead)
+                .Select(a => a.GetModel())
+                .ToArray();
+            
+            return lived;
         }
 
         public WorldViewModel World
