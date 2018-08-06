@@ -16,7 +16,7 @@
         private int _numberOfAgents = 100000;
         private int _memorySize = 8;
         private int _numberOfCycles = 10000;
-        private int _numberOfInstructions = 30;
+        private int _numberOfInstructions = 50;
         private int _worldWidth = 1000;
         private int _worldHeight = 1000;
         private WorldViewModel _world;
@@ -35,25 +35,16 @@
         {
             var random = new Random();
 
-            var agentModels = new List<AgentModel>(NumberOfAgents);
-
             var agentModelFactory = new AgentModelFactory(_instructionFactory, MemorySize, NumberOfInstructions);
-
-            //create the agents
-            for (int x = 0; x < NumberOfAgents; x++)
-            {
-                //Create the agent model
-                var agentModel = agentModelFactory.Create();
-
-                agentModels.Add(agentModel);
-            }
-
+           
             Task.Run(() =>
             {
-                AgentModel[] toRun = agentModels.ToArray();
+                AgentModel[] survived  = new AgentModel[]{};
 
-                for (int generationIndex = 0; generationIndex < 10 && toRun.Length > 0; generationIndex++)
+                for (int generationIndex = 0; generationIndex < 100; generationIndex++)
                 {
+                    AgentModel[] toRun = GenerateAgents(agentModelFactory, survived);
+
                     Console.WriteLine($"Generation {generationIndex} starting....");
 
                     FoodX = (int)(random.NextDouble() * 800) + 100;
@@ -61,15 +52,43 @@
 
                     Console.WriteLine($"  Food is at ({FoodX}, {FoodY})");
 
-                    toRun = RunAgents(toRun);
+                    survived = RunAgents(toRun);
 
-                    string message = $"  Generation {generationIndex} complete - {toRun.Length} survived!";
-
+                    string message = $"  Generation {generationIndex} complete - {survived.Length} survived with max generation {survived.Max(a => a.Generation)}!";
+            
                     Console.WriteLine(message);
                 }
 
-                MessageBox.Show("Done!");
+                Console.WriteLine("Survivors:");
+
+                foreach(var agent in survived.OrderByDescending(a => a.Generation))
+                {
+                    Console.WriteLine($"  Agent {agent.Id} - generation {agent.Generation}");
+                }
             });
+        }
+
+        private AgentModel[] GenerateAgents(AgentModelFactory agentFactory, AgentModel[] survivors)
+        {
+            var agentModels = new List<AgentModel>(NumberOfAgents);
+
+            foreach (var survivor in survivors)
+            {
+                survivor.Generation++;
+            }
+
+            agentModels.AddRange(survivors);
+
+            //create the agents
+            for (int x = 0; x < NumberOfAgents - survivors.Length; x++)
+            {
+                //Create the agent model
+                var agentModel = agentFactory.Create();
+
+                agentModels.Add(agentModel);
+            }
+
+            return agentModels.ToArray();
         }
 
         private AgentModel[] RunAgents(AgentModel[] agentModels)
@@ -93,7 +112,7 @@
 
             for (int i = 0; i < NumberOfCycles; i++)
             {
-                IterationNumber = i;
+                //IterationNumber = i;
 
                 world.Cycle();
             }

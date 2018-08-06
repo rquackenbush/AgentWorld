@@ -54,21 +54,21 @@
 
         public void Cycle()
         {
-            //Parallel.ForEach(Agents, a =>
-            //{
-            //    if (!a.IsDead)
-            //    {
-            //        a.Cycle();
-            //    }
-            //});
-
-            foreach (var agent in Agents.ToArray())
+            Parallel.ForEach(Agents, a =>
             {
-                if (!agent.IsDead)
+                if (!a.IsDead)
                 {
-                    agent.Cycle();
+                    a.Cycle();
                 }
-            }
+            });
+
+            //foreach (var agent in Agents.ToArray())
+            //{
+            //    if (!agent.IsDead)
+            //    {
+            //        agent.Cycle();
+            //    }
+            //}
         }
     }
 }
