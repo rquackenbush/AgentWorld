@@ -1,0 +1,135 @@
+﻿<Window  
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgentWorld.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AgentWorld.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Agent World">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<Menu>
+			<MenuItem Header="_File">
+				<MenuItem Header="E_xit"></MenuItem>
+			</MenuItem>
+			<MenuItem Header="World">
+				<MenuItem Header="Run" Command="{Binding Path=RunCommand}"/>
+			</MenuItem>
+		</Menu>
+	
+        <Grid Grid.Row="1">
+
+        </Grid>
+
+		<ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+
+
+			<Grid>
+            <Canvas Width="{Binding Path=World.Size.Width}" Height="{Binding Path=World.Size.Height}"  HorizontalAlignment="Left" VerticalAlignment="Top" Background="LightGray">
+                <Rectangle Canvas.Left="{Binding Path=World.FoodLocation.Left}" Canvas.Top="{Binding Path=World.FoodLocation.Top}" Width="{Binding Path=World.FoodLocation.Width}" Height="{Binding Path=World.FoodLocation.Height}" Fill="Red"></Rectangle>
+            </Canvas>
+
+			<ItemsControl Grid.Row="2" ItemsSource="{Binding Path=World.Agents}" HorizontalAlignment="Left" VerticalAlignment="Top">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<Canvas   Width="{Binding Path=World.Size.Width}" Height="{Binding Path=World.Size.Height}"/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+
+				<ItemsControl.Styles>
+					<Style Selector="ItemsControl > ContentPresenter">
+						<Setter x:DataType="vm:AgentViewModel" Property="Canvas.Left" Value="{Binding Location.X}"/>
+						<Setter x:DataType="vm:AgentViewModel" Property="Canvas.Top" Value="{Binding Location.Y}"/>
+					</Style>
+				</ItemsControl.Styles>
+
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Rectangle Width="3" Height="3" >
+							<Rectangle.Styles>
+								<Style Selector="Rectangle">
+									<Style.Setters>
+										<Setter Property="Fill" Value="Black"/>
+									</Style.Setters>
+
+								</Style>
+
+								<!--<Style Selector="Rectangle">
+									<Style.Setters>
+									    <Setter Property="Fill" Value="Orange"/>
+									</Style.Setters>
+								</Style>-->
+							</Rectangle.Styles>
+						</Rectangle>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+				<!--<ItemsControl.ItemContainerTheme>
+					<ControlTheme TargetType="ListBoxItem">
+						<Setter x:DataType="vm:AgentViewModel" Property="Canvas.Left" Value="{Binding Path=Location.X}" />
+						<Setter x:DataType="vm:AgentViewModel" Property="Canvas.Top" Value="{Binding Path=Location.Y}" />
+					</ControlTheme>
+					
+				</ItemsControl.ItemContainerTheme>-->
+				
+			</ItemsControl>
+
+			<!--
+
+            <ItemsControl Grid.Row="2" ItemsSource="{Binding Path=World.Agents}" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas   Width="{Binding Path=World.Size.Width}" Height="{Binding Path=World.Size.Height}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Rectangle Width="3" Height="3" >
+                            <Rectangle.Style>
+                                <Style TargetType="Rectangle">
+                                    <Setter Property="Fill" Value="Black"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsDead}" Value="True">
+                                            <Setter Property="Fill" Value="Orange"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                                       
+                            </Rectangle.Style>
+                        </Rectangle>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="Canvas.Left" Value="{Binding Path=Location.X}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Path=Location.Y}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+            </ItemsControl>-->
+
+
+			</Grid>
+		</ScrollViewer>
+        
+
+		
+        <!--<StatusBar Grid.Row="3">-->
+		<StackPanel Grid.Row="3" Orientation="Horizontal">
+            <TextBlock Text="{Binding Path=World.Agents.Count}"></TextBlock>
+            <TextBlock> | </TextBlock>
+            <TextBlock Text="{Binding Path=IterationNumber}"></TextBlock>
+		</StackPanel>
+        <!--</StatusBar>-->
+    </Grid>
+    
+    
+</Window>

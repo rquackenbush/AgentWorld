@@ -1,32 +1,31 @@
-﻿namespace AgentWorld.Engine.Instructions
+﻿namespace AgentWorld.Engine.Instructions;
+
+using AgentWorld.Engine.Model;
+using AgentWorld.Engine.Runtime;
+
+public class ConditionalSkipInstruction : InstructionBase
 {
-    using AgentWorld.Engine.Model;
-    using AgentWorld.Engine.Runtime;
+    public override InstructionType Type => InstructionType.ConditionalSkip;
 
-    public class ConditionalSkipInstruction : InstructionBase
+    protected override InstructionExecutionResult ExecuteCore(InstructionExecutionContext context)
     {
-        public override InstructionType Type => InstructionType.ConditionalSkip;
+        int programCounter = context.ProgramCounter + 1;
 
-        protected override InstructionExecutionResult ExecuteCore(InstructionExecutionContext context)
+        if (context.Instruction.Data < context.Memory.Length)
         {
-            int programCounter = context.ProgramCounter + 1;
-
-            if (context.Instruction.Data < context.Memory.Length)
-            {
-                if (context.Memory[context.Instruction.Data])
-                    programCounter++;
-            }
-
-            return new InstructionExecutionResult(programCounter);
+            if (context.Memory[context.Instruction.Data])
+                programCounter++;
         }
 
-        public override InstructionModel Create(InstructionCreationContext context)
+        return new InstructionExecutionResult(programCounter);
+    }
+
+    public override InstructionModel Create(InstructionCreationContext context)
+    {
+        return new InstructionModel()
         {
-            return new InstructionModel()
-            {
-                Type = Type,
-                Data = context.Random.Next(0, context.MemorySize)
-            };
-        }
+            Type = Type,
+            Data = context.Random.Next(0, context.MemorySize)
+        };
     }
 }

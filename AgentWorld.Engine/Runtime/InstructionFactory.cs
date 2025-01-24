@@ -1,37 +1,36 @@
-﻿namespace AgentWorld.Engine.Runtime
+﻿namespace AgentWorld.Engine.Runtime;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using AgentWorld.Engine.Instructions;
+using AgentWorld.Engine.Model;
+
+public class InstructionFactory
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using AgentWorld.Engine.Instructions;
-    using AgentWorld.Engine.Model;
+    private readonly IDictionary<InstructionType, InstructionBase> _instructions;
 
-    public class InstructionFactory
+    public InstructionFactory()
     {
-        private readonly IDictionary<InstructionType, InstructionBase> _instructions;
-
-        public InstructionFactory()
+        var instructions = new InstructionBase[]
         {
-            var instructions = new InstructionBase[]
-            {
-                new ClearMemoryInstruction(), 
-                new ConditionalSkipInstruction(), 
-                new JumpInstruction(), 
-                new SetMemoryInstruction(), 
-            };
+            new ClearMemoryInstruction(), 
+            new ConditionalSkipInstruction(), 
+            new JumpInstruction(), 
+            new SetMemoryInstruction(), 
+        };
 
-            _instructions = instructions.ToDictionary(i => i.Type);
-        }
+        _instructions = instructions.ToDictionary(i => i.Type);
+    }
 
-        public InstructionBase this[InstructionType type]
+    public InstructionBase this[InstructionType type]
+    {
+        get
         {
-            get
-            {
-                if (!_instructions.TryGetValue(type, out var instruction))
-                    throw new Exception($"Unable to find instruction for type {type}.");
+            if (!_instructions.TryGetValue(type, out var instruction))
+                throw new Exception($"Unable to find instruction for type {type}.");
 
-                return instruction;
-            }
+            return instruction;
         }
     }
 }

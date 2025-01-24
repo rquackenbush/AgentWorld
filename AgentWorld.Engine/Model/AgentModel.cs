@@ -1,15 +1,14 @@
-﻿namespace AgentWorld.Engine.Model
+﻿namespace AgentWorld.Engine.Model;
+
+using System;
+
+public class AgentModel
 {
-    using System;
+    public Guid Id { get; set; }
 
-    public class AgentModel
-    {
-        public Guid Id { get; set; }
+    public InstructionModel[] Instructions { get; set; }
 
-        public InstructionModel[] Instructions { get; set; }
+    public int MemorySize { get; set; }
 
-        public int MemorySize { get; set; }
-
-        public int Generation { get; set; }
-    }
+    public int Generation { get; set; }
 }

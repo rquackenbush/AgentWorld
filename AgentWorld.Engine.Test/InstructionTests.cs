@@ -1,102 +1,101 @@
 ﻿using System;
 
-namespace AgentWorld.Engine.Test
+namespace AgentWorld.Engine.Test;
+
+using AgentWorld.Engine.Instructions;
+using AgentWorld.Engine.Model;
+using AgentWorld.Engine.Runtime;
+using Xunit;
+
+public class InstructionTests
 {
-    using AgentWorld.Engine.Instructions;
-    using AgentWorld.Engine.Model;
-    using AgentWorld.Engine.Runtime;
-    using Xunit;
-
-    public class InstructionTests
+    [Theory]
+    [InlineData(0)]
+    [InlineData(10)]
+    [InlineData(20)]
+    public void ClearMemoryTest(int programCounter)
     {
-        [Theory]
-        [InlineData(0)]
-        [InlineData(10)]
-        [InlineData(20)]
-        public void ClearMemoryTest(int programCounter)
+        var instruction = new SetMemoryInstruction();
+
+        var instructionModel = new InstructionModel
         {
-            var instruction = new SetMemoryInstruction();
+            Type = instruction.Type,
+            Data = 0
+        };
 
-            var instructionModel = new InstructionModel
-            {
-                Type = instruction.Type,
-                Data = 0
-            };
+        var context = new InstructionExecutionContext(new bool[1], programCounter, instructionModel);
 
-            var context = new InstructionExecutionContext(new bool[1], programCounter, instructionModel);
+        var result = instruction.Execute(context);
 
-            var result = instruction.Execute(context);
+        Assert.True(context.Memory[0]);
 
-            Assert.True(context.Memory[0]);
+        Assert.Equal(programCounter + 1, result.ProgramCounter);
+    }
 
-            Assert.Equal(programCounter + 1, result.ProgramCounter);
-        }
+    [Theory]
+    [InlineData(0)]
+    [InlineData(10)]
+    [InlineData(20)]
+    public void ClearOutputTest(int programCounter)
+    {
+        var instruction = new ClearMemoryInstruction();
 
-        [Theory]
-        [InlineData(0)]
-        [InlineData(10)]
-        [InlineData(20)]
-        public void ClearOutputTest(int programCounter)
+        var instructionModel = new InstructionModel
         {
-            var instruction = new ClearMemoryInstruction();
+            Type = instruction.Type,
+            Data = 0
+        };
 
-            var instructionModel = new InstructionModel
-            {
-                Type = instruction.Type,
-                Data = 0
-            };
+        var context = new InstructionExecutionContext(new bool[] { true }, programCounter, instructionModel);
 
-            var context = new InstructionExecutionContext(new bool[] { true }, programCounter, instructionModel);
+        var result = instruction.Execute(context);
 
-            var result = instruction.Execute(context);
+        Assert.False(context.Memory[0]);
 
-            Assert.False(context.Memory[0]);
+        Assert.Equal(programCounter + 1, result.ProgramCounter);
+    }
 
-            Assert.Equal(programCounter + 1, result.ProgramCounter);
-        }
+    [Theory]
+    [InlineData(0, 40)]
+    [InlineData(2, 10)]
+    [InlineData(4, 2)]
+    [InlineData(8, 0)]
+    public void JumpTest(int programCounterInitial, int address)
+    {
+        var instruction = new JumpInstruction();
 
-        [Theory]
-        [InlineData(0, 40)]
-        [InlineData(2, 10)]
-        [InlineData(4, 2)]
-        [InlineData(8, 0)]
-        public void JumpTest(int programCounterInitial, int address)
+        var instructionModel = new InstructionModel()
         {
-            var instruction = new JumpInstruction();
+            Type = instruction.Type,
+            Data = address,
+        };
 
-            var instructionModel = new InstructionModel()
-            {
-                Type = instruction.Type,
-                Data = address,
-            };
+        var context = new InstructionExecutionContext(new bool[0], programCounterInitial, instructionModel);
 
-            var context = new InstructionExecutionContext(new bool[0], programCounterInitial, instructionModel);
+        var result = instruction.Execute(context);
 
-            var result = instruction.Execute(context);
+        Assert.Equal(address, result.ProgramCounter);
+    }
 
-            Assert.Equal(address, result.ProgramCounter);
-        }
+    [Theory]
+    [InlineData(0, false, 1)]
+    [InlineData(0, true, 2)]
+    [InlineData(10, false, 11)]
+    [InlineData(10, true, 12)]
+    public void ConditionalSkipTest(int programCounterInitial, bool inputValue, int expectedProgramCounter)
+    {
+        var instruction = new ConditionalSkipInstruction();
 
-        [Theory]
-        [InlineData(0, false, 1)]
-        [InlineData(0, true, 2)]
-        [InlineData(10, false, 11)]
-        [InlineData(10, true, 12)]
-        public void ConditionalSkipTest(int programCounterInitial, bool inputValue, int expectedProgramCounter)
+        var instructionModel = new InstructionModel()
         {
-            var instruction = new ConditionalSkipInstruction();
+            Type = instruction.Type,
+            Data = 0,
+        };
 
-            var instructionModel = new InstructionModel()
-            {
-                Type = instruction.Type,
-                Data = 0,
-            };
+        var context = new InstructionExecutionContext(new bool[] { inputValue }, programCounterInitial, instructionModel);
 
-            var context = new InstructionExecutionContext(new bool[] { inputValue }, programCounterInitial, instructionModel);
+        var result = instruction.Execute(context);
 
-            var result = instruction.Execute(context);
-
-            Assert.Equal(expectedProgramCounter, result.ProgramCounter);
-        }
+        Assert.Equal(expectedProgramCounter, result.ProgramCounter);
     }
 }

@@ -1,25 +1,24 @@
-﻿namespace AgentWorld.Engine.Instructions
+﻿namespace AgentWorld.Engine.Instructions;
+
+using AgentWorld.Engine.Model;
+using AgentWorld.Engine.Runtime;
+
+public class JumpInstruction : InstructionBase
 {
-    using AgentWorld.Engine.Model;
-    using AgentWorld.Engine.Runtime;
+    public override InstructionType Type => InstructionType.Jump;
 
-    public class JumpInstruction : InstructionBase
+    protected override InstructionExecutionResult ExecuteCore(InstructionExecutionContext context)
     {
-        public override InstructionType Type => InstructionType.Jump;
+        //return new InstructionExecutionResult(context.Instruction.Data);
+        return new InstructionExecutionResult(context.ProgramCounter + 1);
+    }
 
-        protected override InstructionExecutionResult ExecuteCore(InstructionExecutionContext context)
+    public override InstructionModel Create(InstructionCreationContext context)
+    {
+        return new InstructionModel()
         {
-            //return new InstructionExecutionResult(context.Instruction.Data);
-            return new InstructionExecutionResult(context.ProgramCounter + 1);
-        }
-
-        public override InstructionModel Create(InstructionCreationContext context)
-        {
-            return new InstructionModel()
-            {
-                Type = Type,
-                Data = context.Random.Next(0, context.NumberOfInstructions)
-            };
-        }
+            Type = Type,
+            Data = context.Random.Next(0, context.NumberOfInstructions)
+        };
     }
 }
